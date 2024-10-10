@@ -58,7 +58,7 @@ In honor of their recent concert during the summer (which I didn't get the ticke
 Coldplay was a very large group that I listened to in elementary and middle school. They slowly became more and more inactive as they got busy with their own lives, but recently, they had a concert in Toronto, and they scheduled a next one for next year as well. 
 
 
-We got the data from @spot and cleaned it using @citeR with the help of @tidy. Code and inspiration comes from @tellingstories. 
+We got the data from @spotify_developer and cleaned it using @citeR with the help of @tidy and @spot. Code and inspiration comes from @tellingstories. 
 
 # Duration of Songs
 
@@ -68,6 +68,7 @@ So the first thing [@fig-1] I want to investigate was the same thing that was in
 #| echo: false
 #| message: false
 #| label: fig-1
+#| fig-cap: "Duration in Mins vs song release date"
 
 coldplay <- as_tibble(coldplay)
 
@@ -95,6 +96,7 @@ coldplay |>
 #| echo: false
 #| message: false
 #| label: fig-2
+#| fig-cap: "Number of Songs Released by Coldplay by Month"
 
 coldplay1 <- coldplay %>%
   select(track_name, album_release_date) %>%
@@ -117,7 +119,7 @@ monthly_counts <- monthly_counts %>%
 # Create a plot
 ggplot(monthly_counts, aes(x = year_month, y = number_of_songs)) +
   geom_bar(stat = "identity") +
-  labs(x = "Year and Month", y = "Number of Songs", title = "Number of Songs Released by Coldplay by Month") +
+  labs(x = "Year and Month", y = "Number of Songs") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
@@ -128,6 +130,7 @@ The next graph [@fig-2] shows the number of songs they released in that month. T
 #| echo: false
 #| message: false
 #| label: fig-3
+#| fig-cap: "Average Tempo, Energy, and Loudness for Each Coldplay Album"
 
 
 coldplay2 <- coldplay %>%
@@ -149,8 +152,7 @@ album_averages <- coldplay2 %>%
   )
 
 kable(album_averages, 
-      col.names = c("Album Name", "Average Tempo", "Average Energy", "Average Loudness"),
-      caption = "Average Tempo, Energy, and Loudness for Each Coldplay Album")
+      col.names = c("Album Name", "Average Tempo", "Average Energy", "Average Loudness"))
 ```
 Lastly through this table [@fig-3], I am trying to infer how the Coldplay concert will be like. The band is known to have amazing sold out concerts where the money is worth the experience. So, I will be analyzing what the tempo, energy and loudness of each albums are. These are averages taken across the songs in the album and some of the qualitative scales like energy and loudness was determined through survey's (done by spotify themselves). We see that all of their songs have a low loudness as they are in the negatives. This essentially means that although Coldplay is a rock band it is not very loud music. The energy levels across all the albums never go below 0.45 and never above 0.75 which is probably. This may be due to the fact that some people classify Coldplay and their songs as soft rock which might be why there is some energetic component involved but its not too calm either. This makes it perfect for a concert because you are not getting a headache from the energy and loudness but you are not bored either. The last average I compute is the tempo. we see that the tempo ranges between 107 bpm and 131 bpm. It is said that a song is perfect if the tempo is the same as your heart rate which is around 80-90 bpm. Based on this measurement, it seems that all of Coldplay's songs are very energetic and keeps you heart pumping so you are engaged throughout the entire concert.
 
