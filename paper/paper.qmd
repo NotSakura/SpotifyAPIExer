@@ -1,0 +1,179 @@
+---
+title: "Coldplay Concert"
+author: 
+  - Shreya Sakura Noskor
+  - Group 22
+thanks: "Code and data are available at: [hthttps://github.com/NotSakura/SpotifyAPIExer.git](https://github.com/NotSakura/SpotifyAPIExer.git)."
+date: today
+date-format: long
+format: pdf
+number-sections: true
+bibliography: references.bib
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+
+
+library(usethis)
+library(spotifyr)
+library(devtools)
+library(tidyverse)
+library(tibble)
+library(dplyr)
+library(knitr)
+```
+
+
+
+
+```{r}
+#| echo: false
+#| message: false
+
+Coldplay <- get_artist_audio_features('Coldplay')
+saveRDS(Coldplay, "coldplay.rds")
+```
+
+
+
+```{r}
+#| echo: false
+#| message: false
+
+
+coldplay <- readRDS("coldplay.rds")
+
+
+```
+
+# Introduction
+
+
+In honor of their recent concert during the summer (which I didn't get the tickets to, unfortunately), I am writing this paper to manifest my tickets for the next concert as well as understand how frequent albums get released with such a global band. 
+
+Coldplay was a very large group that I listened to in elementary and middle school. They slowly became more and more inactive as they got busy with their own lives, but recently, they had a concert in Toronto, and they scheduled a next one for next year as well. 
+
+
+We got the data from @spot and cleaned it using @citeR with the help of @tidy. Code and inspiration comes from @tellingstories. 
+
+# Duration of Songs
+
+So the first thing [@fig-1] I want to investigate was the same thing that was investigated for the radiohead in @tellingstories. Here we see the duration of each song in every album that was relased that year. We do not see which song comes from which album but we see a trend. Here we see that the longest song we have is 10 mins. This is the song Coloratura where the song was 10 mins and 18 secs in total. The shortest song was 21 seconds, which was probably a b-side (a song that is not the title track). 
+
+```{r}
+#| echo: false
+#| message: false
+#| label: fig-1
+
+coldplay <- as_tibble(coldplay)
+
+coldplay |>
+  mutate(album_release_date = ymd(album_release_date)) |>
+  ggplot(aes(
+    x = album_release_date,
+    y = duration_ms / 60000,  # Convert milliseconds to seconds
+    group = album_release_date
+  )) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.5, width = 0.3, height = 0) +
+  theme_minimal() +
+  labs(
+    x = "Album Release Date",
+    y = "Duration of Song (mins)"
+  )
+
+
+```
+
+
+
+```{r}
+#| echo: false
+#| message: false
+#| label: fig-2
+
+coldplay1 <- coldplay %>%
+  select(track_name, album_release_date) %>%
+  filter(!is.na(album_release_date)) # Remove any NA values
+
+# Convert release_date to date format and extract year and month
+coldplay1 <- coldplay1 %>%
+  mutate(album_release_date = as.Date(album_release_date),
+         year = year(album_release_date),
+         month = month(album_release_date, label = TRUE)) # Use label for month names
+
+# Group by year and month, and count the number of songs
+monthly_counts <- coldplay1 %>%
+  group_by(year, month) %>%
+  summarise(number_of_songs = n(), .groups = 'drop')
+
+monthly_counts <- monthly_counts %>%
+  mutate(year_month = factor(paste(year, month), levels = unique(paste(year, month))))
+
+# Create a plot
+ggplot(monthly_counts, aes(x = year_month, y = number_of_songs)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Year and Month", y = "Number of Songs", title = "Number of Songs Released by Coldplay by Month") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The next graph [@fig-2] shows the number of songs they released in that month. They are a band that has been active for a very long time. The started the band back in 1997 but their first album came out in 2000. It looks like they had a break between 2003 to 2005, 2005 to 2008, 2012 to 2014 and then once again from 2021 to 2024. The break may have been just them producing more music to release all at the same time. I say this because every large gap of 1 year or more in the release dates they have, the graph shows that they release a lot of songs at once or slowly release large number of songs.  
+
+
+```{r}
+#| echo: false
+#| message: false
+#| label: fig-3
+
+
+coldplay2 <- coldplay %>%
+  select(track_name, album_name, album_release_date, tempo, energy, loudness) %>%
+  filter(!is.na(album_release_date)) # Remove any NA values
+
+# Convert album_release_date to date format
+coldplay2 <- coldplay2 %>%
+  mutate(album_release_date = as.Date(album_release_date))
+
+# Group by album and calculate averages
+album_averages <- coldplay2 %>%
+  group_by(album_name) %>%
+  summarise(
+    average_tempo = mean(tempo, na.rm = TRUE),
+    average_energy = mean(energy, na.rm = TRUE),
+    average_loudness = mean(loudness, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
+kable(album_averages, 
+      col.names = c("Album Name", "Average Tempo", "Average Energy", "Average Loudness"),
+      caption = "Average Tempo, Energy, and Loudness for Each Coldplay Album")
+```
+Lastly through this table [@fig-3], I am trying to infer how the Coldplay concert will be like. The band is known to have amazing sold out concerts where the money is worth the experience. So, I will be analyzing what the tempo, energy and loudness of each albums are. These are averages taken across the songs in the album and some of the qualitative scales like energy and loudness was determined through survey's (done by spotify themselves). We see that all of their songs have a low loudness as they are in the negatives. This essentially means that although Coldplay is a rock band it is not very loud music. The energy levels across all the albums never go below 0.45 and never above 0.75 which is probably. This may be due to the fact that some people classify Coldplay and their songs as soft rock which might be why there is some energetic component involved but its not too calm either. This makes it perfect for a concert because you are not getting a headache from the energy and loudness but you are not bored either. The last average I compute is the tempo. we see that the tempo ranges between 107 bpm and 131 bpm. It is said that a song is perfect if the tempo is the same as your heart rate which is around 80-90 bpm. Based on this measurement, it seems that all of Coldplay's songs are very energetic and keeps you heart pumping so you are engaged throughout the entire concert.
+
+
+To finish it off I can tell based in  the information collected from spotify's API, that the concert will be long but very much worth it. 
+
+\newpage
+
+# Appendix
+
+```{r}
+#| echo: false
+#| message: false
+
+kable(monthly_counts, 
+      col.names = c("Year", "Month", "Number of Songs", "Year-Month"),
+      caption = "Monthly Song Counts for Coldplay")
+```
+
+
+\newpage
+
+
+# References
+
+
