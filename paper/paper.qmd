@@ -59,10 +59,14 @@ In honor of their recent concert during the summer, I am writing this paper to m
 
 Coldplay was a very large group that I listened to in elementary and middle school. They slowly became more and more inactive as they got busy with their own lives, but recently, they had a concert in Toronto, and they scheduled a next one for next year as well. 
 
-
+# Data
 We got the data from @spotify_developer and cleaned it using @citeR with the help of @tidy and @spot. Code and inspiration comes from @tellingstories. 
 
-# Duration of Songs
+## Measurement 
+The variables that were gathered was track name, album name, duration in milli-second, album release date, tempo, energy, loudness. The variables track name, album name, duration, album release date and tempo can all be found on the album on Spotify so all it requires is some web scrapping. It may not even need that spotify, is given these data when the artist posts their music on their site. Energy, loudness may have been computed by spotify themselves. Energy just refers to the amount of energy the music has and Loudness is a scale where they measure if the song is loud or not. Spotify may be asking users, for their input on the energy and loudness of the song or they may have their own scale, where certain characteristic determine if the song is loud or energetic. 
+
+# Result
+## Duration of Songs
 
 So the first thing [@fig-1] I want to investigate was the same thing that was investigated for the radiohead in @tellingstories. Here we see the duration of each song in every album that was relased that year. We do not see which song comes from which album but we see a trend. Here we see that the longest song we have is 10 mins. This is the song Coloratura where the song was 10 mins and 18 secs in total. The shortest song was 21 seconds, which was probably a b-side (a song that is not the title track). 
 
@@ -93,7 +97,7 @@ coldplay |>
 ```
 
 
-
+## Number of Songs Released
 ```{r}
 #| echo: false
 #| message: false
@@ -127,7 +131,8 @@ ggplot(monthly_counts, aes(x = year_month, y = number_of_songs)) +
 
 The next graph [@fig-2] shows the number of songs they released in that month. They are a band that has been active for a very long time. The started the band back in 1997 but their first album came out in 2000. It looks like they had a break between 2003 to 2005, 2005 to 2008, 2012 to 2014 and then once again from 2021 to 2024. The break may have been just them producing more music to release all at the same time. I say this because every large gap of 1 year or more in the release dates they have, the graph shows that they release a lot of songs at once or slowly release large number of songs. There are months missing from this graph and those are years, where they have not released any music. The graph is not displayed in a uniform x-axis due to the fact that they, have been releasing music for 24 years and showing every months is not practical. Also if we group the data, then we loose key insights we find by see the months.  
 
-
+## Temp, Energy and Loudness
+Next we look at @tbl-3 to see the various tempos, energy level and loudness of each album. We see that since Coldplay is a soft rock band, their music shows that it is not very loud and the tempo is the perfect beat to enjoy at a concert as it is not too fast but it is not too slow either. the tempo averages at around 125 beats per min. And lastly because it is soft rock band the loudness isn't too much either. 
 ```{r}
 #| echo: false
 #| message: false
@@ -157,7 +162,9 @@ album_averages <- coldplay2 %>%
 kable(album_averages, 
       col.names = c("Album Name", "Average Tempo", "Average Energy", "Average Loudness"))
 ```
-Lastly through this table [@tbl-3], I am trying to infer how the Coldplay concert will be like. The band is known to have amazing sold out concerts where the money is worth the experience. So, I will be analyzing what the tempo, energy and loudness of each albums are. These are averages taken across the songs in the album and some of the qualitative scales like energy and loudness was determined through survey's (done by spotify themselves). We see that all of their songs have a low loudness as they are in the negatives. This essentially means that although Coldplay is a rock band it is not very loud music. The energy levels across all the albums never go below 0.45 and never above 0.75 which is probably. This may be due to the fact that some people classify Coldplay and their songs as soft rock which might be why there is some energetic component involved but its not too calm either. This makes it perfect for a concert because you are not getting a headache from the energy and loudness but you are not bored either. The last average I compute is the tempo. we see that the tempo ranges between 107 bpm and 131 bpm. It is said that a song is perfect if the tempo is the same as your heart rate which is around 80-90 bpm. Based on this measurement, it seems that all of Coldplay's songs are very energetic and keeps you heart pumping so you are engaged throughout the entire concert.
+
+# Discussion
+Through this table [@tbl-3], I am trying to infer how the Coldplay concert will be like. The band is known to have amazing sold out concerts where the money is worth the experience. So, I will be analyzing what the tempo, energy and loudness of each albums are. These are averages taken across the songs in the album and some of the qualitative scales like energy and loudness was determined through survey's (done by spotify themselves). We see that all of their songs have a low loudness as they are in the negatives. This essentially means that although Coldplay is a rock band it is not very loud music. The energy levels across all the albums never go below 0.45 and never above 0.75 which is probably. This may be due to the fact that some people classify Coldplay and their songs as soft rock which might be why there is some energetic component involved but its not too calm either. This makes it perfect for a concert because you are not getting a headache from the energy and loudness but you are not bored either. The last average I compute is the tempo. we see that the tempo ranges between 107 bpm and 131 bpm. It is said that a song is perfect if the tempo is the same as your heart rate which is around 80-90 bpm. Based on this measurement, it seems that all of Coldplay's songs are very energetic and keeps you heart pumping so you are engaged throughout the entire concert.
 
 
 To finish it off I can tell based in  the information collected from spotify's API, that the concert will be long but very much worth it. 
